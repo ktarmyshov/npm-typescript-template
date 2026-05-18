@@ -5,6 +5,8 @@ on:
     workflows: ['CI']
     types:
       - completed
+    branches:
+      - main
   workflow_dispatch:
 
 concurrency:
@@ -27,7 +29,6 @@ jobs:
     # prevents this action from running on forks
     if: >-
       github.repository == 'kt-npm-modules/npm-typescript-template' && 
-      github.ref == 'refs/heads/main' && 
       github.event.workflow_run.event == 'push' && 
       github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
@@ -41,16 +42,4 @@ jobs:
           private-key: ${{ secrets.WORKFLOW_APP_PRIVATE_KEY }}
           matrix-node-version: ${{ vars.MATRIX_NODE_VERSION }}
           # cache-reset: true
-          # npm-token: ${{ secrets.NPM_TOKEN }} # uncomment if not trusted publishing
-
-  # This is likely not needed because we updated script npm run changeset:version - which updates the package-lock.json
-  # update-pkg-lock:
-  #   needs: release
-  #   if: needs.release.outputs.release-branch != ''
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: kt-workflows/actions/npm-release-upd-pkg-lock@main
-  #       with:
-  #         app-id: ${{ secrets.WORKFLOW_APP_ID }}
-  #         private-key: ${{ secrets.WORKFLOW_APP_PRIVATE_KEY }}
-  #         release-branch: ${{ needs.release.outputs.release-branch }}
+          npm-token: ${{ secrets.NPM_TOKEN }} # uncomment if not trusted publishing
